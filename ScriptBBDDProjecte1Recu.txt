@@ -1,0 +1,70 @@
+DROP DATABASE projecte1db;
+CREATE DATABASE projecte1db;
+USE projecte1db;
+-- 
+CREATE TABLE Proveidors (
+    id_proveidor INT PRIMARY KEY AUTO_INCREMENT,
+    nom_proveidor VARCHAR(100),
+    cif VARCHAR(20),
+    actiu BOOLEAN,
+    motiu_inactiu TEXT,
+    data_creacio DATE,                -- extra de tipus date
+    correu_electronic VARCHAR(100),   -- extra de tipus string
+    rating_proveidor FLOAT,           -- extra de tipus float
+    mesos_de_colaboracio INT          -- extra de tipus int
+);
+
+--
+CREATE TABLE Families (
+    id_familia INT PRIMARY KEY AUTO_INCREMENT,
+    nom_familia VARCHAR(100),
+    descripcio TEXT,
+    data_alta DATE,
+    id_proveidor_defecte INT, -- Pot ser NULL si no hi ha proveidor
+    observacions TEXT,
+    FOREIGN KEY (id_proveidor_defecte) REFERENCES Proveidors(id_proveidor) -- ON DELETE SET NULL
+);
+
+-- 
+CREATE TABLE Referencies (
+    id_referencia INT PRIMARY KEY AUTO_INCREMENT,
+    nom_producte VARCHAR(100),
+    quantitat DECIMAL(10, 2),
+    unitat_mida VARCHAR(50),
+    data_alta DATE,
+    data_fabricacio DATE,               -- extra de tipus date
+    descripcio_producte VARCHAR(100),   -- extra de tipus string
+    preu FLOAT,          				-- extra de tipus float
+    unitats_venudes INT,           	    -- extra de tipus int
+    id_familia INT ,		    -- Relació obligatòria amb familia
+    id_proveidor INT ,	    -- Relació obligatòria amb proveidor
+    FOREIGN KEY (id_familia) REFERENCES Families(id_familia), -- ON DELETE CASCADE,
+    FOREIGN KEY (id_proveidor) REFERENCES Proveidors(id_proveidor) -- ON DELETE CASCADE
+);
+
+-- Utilitza la base de dades
+USE projecte1db;
+
+-- Insercions en la taula Proveidors
+INSERT INTO Proveidors (nom_proveidor, cif, actiu, motiu_inactiu, data_creacio, correu_electronic, rating_proveidor, mesos_de_colaboracio)
+VALUES 
+('Mercedes-Benz', 'A12345678', TRUE, NULL, '2020-05-10', 'contact@mercedes.com', 4.9, 60),
+('Ferrari S.p.A', 'B98765432', TRUE, NULL, '2021-02-18', 'info@ferrari.com', 5.0, 24),
+('Yamaha Motors', 'C45678901', TRUE, NULL, '2019-11-11', 'sales@yamaha.com', 4.7, 48),
+('Lamborghini', 'D65432109', FALSE, 'Fusió amb altra empresa', '2022-01-30', 'support@lamborghini.com', 4.8, 12);
+
+-- Insercions en la taula Families
+INSERT INTO Families (nom_familia, descripcio, data_alta, id_proveidor_defecte, observacions)
+VALUES 
+('Moto', 'Vehicles de dues rodes per a ús personal o esportiu.', '2020-10-01', 3, 'Populars en entorns urbans.'),
+('Cotxe', 'Vehicles de quatre rodes per a ús personal o familiar.', '2021-05-15', 1, 'Els més venuts per a famílies.'),
+('Camió', 'Vehicles grans per a transport de mercaderies.', '2020-12-10', NULL, 'Essencials per a empreses de logística.'),
+('Supercotxe', 'Cotxes d\'alta gamma i prestacions.', '2022-03-25', 2, 'Destinats a mercats de luxe.');
+
+-- Insercions en la taula Referencies
+INSERT INTO Referencies (nom_producte, quantitat, unitat_mida, data_alta, data_fabricacio, descripcio_producte, preu, unitats_venudes, id_familia, id_proveidor)
+VALUES 
+('Yamaha YZF-R1', 20, 'unitats', '2023-01-15', '2022-12-01', 'Moto esportiva de Yamaha amb motor potent.', 19000.99, 10, 1, 3),
+('Mercedes-Benz Classe C', 15, 'unitats', '2023-02-20', '2023-01-10', 'Cotxe sedan de luxe amb tecnologia avançada.', 45000.50, 5, 2, 1),
+('Ferrari 488 GTB', 5, 'unitats', '2023-03-10', '2022-11-25', 'Supercotxe amb disseny elegant i prestacions superiors.', 250000.75, 2, 4, 2),
+('Camió Mercedes Actros', 8, 'unitats', '2023-03-25', '2023-01-30', 'Camió per a transport pesat amb gran capacitat de càrrega.', 90000.00, 3, 3, 1);
